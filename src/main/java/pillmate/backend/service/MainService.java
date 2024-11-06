@@ -112,7 +112,7 @@ public class MainService {
         return medicines.stream().map(medicinePerMember -> {
             LocalDate endDate = medicinePerMember.getCreated().plusDays(medicinePerMember.getDay());
             LocalDate today = LocalDate.now();
-            Long daysLeft = ChronoUnit.DAYS.between(today, endDate);
+            Long daysLeft = getLeftDays(today, endDate);
 
             return RemainingMedicine.builder()
                     .name(medicinePerMember.getMedicine().getName())
@@ -120,6 +120,16 @@ public class MainService {
                     .day(daysLeft)
                     .build();
         }).toList();
+    }
+
+    private static Long getLeftDays(LocalDate today, LocalDate endDate) {
+        Long daysLeft = ChronoUnit.DAYS.between(today, endDate);
+
+        if (daysLeft < 0) {
+            daysLeft = 0L;
+        }
+
+        return daysLeft;
     }
 
     private BestRecord getBestRecord(Long memberId) {
