@@ -21,7 +21,7 @@ public class CreateDiaryRequest {
 
     public Diary toEntity(Member member) {
         return Diary.builder()
-                .date(LocalDate.now())
+                .date(date)
                 .member(member)
                 .symptom(symptom)
                 .score(score)
