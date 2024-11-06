@@ -116,6 +116,7 @@ public class MainService {
 
             return RemainingMedicine.builder()
                     .name(medicinePerMember.getMedicine().getName())
+                    .category(medicinePerMember.getMedicine().getCategory())
                     .day(daysLeft)
                     .build();
         }).toList();
