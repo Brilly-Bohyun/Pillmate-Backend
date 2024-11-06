@@ -9,6 +9,7 @@ import pillmate.backend.dto.alarm.SimpleAlarmInfo;
 import pillmate.backend.dto.diary.CreateDiaryRequest;
 import pillmate.backend.dto.diary.CreateDiaryResponse;
 import pillmate.backend.dto.diary.EditDiaryRequest;
+import pillmate.backend.dto.diary.PainInfo;
 import pillmate.backend.dto.diary.ShowDiaryResponse;
 import pillmate.backend.dto.diary.TotalInfo;
 import pillmate.backend.dto.diary.Today;
@@ -76,7 +77,18 @@ public class DiaryService {
                 .endDate(medicinePerMember.getCreated().plusDays(medicinePerMember.getDay()))
                 .build()).toList();
         Long duration = ChronoUnit.DAYS.between(findByMemberId(memberId).getCreated(), LocalDate.now());
-        return ShowDiaryResponse.builder().duration(duration).totalInfo(totalInfos).today(show(memberId, LocalDate.now())).build();
+        return ShowDiaryResponse.builder()
+                .duration(duration)
+                .painsPerDay(getPainsPerDay(memberId))
+                .totalInfo(totalInfos)
+                .today(show(memberId, LocalDate.now()))
+                .build();
+    }
+
+    private List<PainInfo> getPainsPerDay(Long memberId) {
+        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
+        List<Diary> diaries = diaryRepository.findDiariesByMemberIdAndDateRange(memberId, firstDayOfMonth, LocalDate.now());
+        return diaries.stream().map(diary -> PainInfo.builder().date(diary.getDate()).level(diary.getScore()).build()).toList();
     }
 
     private List<Alarm> findAlarmsByMemberId(Long memberId) {
