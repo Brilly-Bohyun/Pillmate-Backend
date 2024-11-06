@@ -6,7 +6,6 @@ import pillmate.backend.entity.Diary;
 import pillmate.backend.entity.member.Member;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -22,7 +21,7 @@ public class CreateDiaryRequest {
 
     public Diary toEntity(Member member) {
         return Diary.builder()
-                .date(date)
+                .date(LocalDate.now())
                 .member(member)
                 .symptom(symptom)
                 .score(score)
