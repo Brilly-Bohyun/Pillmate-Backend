@@ -21,6 +21,7 @@ import pillmate.backend.repository.DiaryRepository;
 import pillmate.backend.repository.MedicinePerMemberRepository;
 import pillmate.backend.repository.MemberRepository;
 
+import java.time.temporal.ChronoUnit;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -69,7 +70,8 @@ public class DiaryService {
                 .startDate(medicinePerMember.getCreated())
                 .endDate(medicinePerMember.getCreated().plusDays(medicinePerMember.getDay()))
                 .build()).toList();
-        return ShowDiaryResponse.builder().totalInfo(totalInfos).today(show(memberId, LocalDate.now())).build();
+        Long duration = ChronoUnit.DAYS.between(findByMemberId(memberId).getCreated(), LocalDate.now());
+        return ShowDiaryResponse.builder().duration(duration).totalInfo(totalInfos).today(show(memberId, LocalDate.now())).build();
     }
 
     private List<Alarm> findAlarmsByMemberId(Long memberId) {

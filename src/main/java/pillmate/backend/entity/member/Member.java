@@ -22,6 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -48,7 +49,7 @@ public class Member implements UserDetails {
 
     @Column(name = "created", nullable = true)
     @CreatedDate
-    private Date created;
+    private LocalDate created;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -73,7 +74,7 @@ public class Member implements UserDetails {
     private Boolean usable;
 
     @Builder
-    public Member(Long id, String email, String name, String password, Date created, MemberType type, Long providerId, Boolean usable) {
+    public Member(Long id, String email, String name, String password, LocalDate created, MemberType type, Long providerId, Boolean usable) {
         this.id = id;
         this.email = email;
         this.name = name;
