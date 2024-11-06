@@ -17,6 +17,7 @@ import pillmate.backend.dto.diary.EditDiaryRequest;
 import pillmate.backend.dto.diary.ShowDiaryResponse;
 import pillmate.backend.dto.diary.TotalInfo;
 import pillmate.backend.dto.diary.Today;
+import pillmate.backend.entity.member.Symptom;
 import pillmate.backend.service.DiaryService;
 
 import java.time.LocalDate;
@@ -48,5 +49,10 @@ public class DiaryController {
     @GetMapping
     public ShowDiaryResponse showMonthly(@LoggedInMember Long memberId) {
         return diaryService.showMonthly(memberId);
+    }
+
+    @GetMapping("/symptoms")
+    public List<Symptom> showSymptoms(@LoggedInMember Long memberId) {
+        return diaryService.showSymptoms(memberId);
     }
 }

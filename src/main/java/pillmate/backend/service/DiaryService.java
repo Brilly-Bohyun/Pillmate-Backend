@@ -16,6 +16,7 @@ import pillmate.backend.entity.Alarm;
 import pillmate.backend.entity.Diary;
 import pillmate.backend.entity.MedicinePerMember;
 import pillmate.backend.entity.member.Member;
+import pillmate.backend.entity.member.Symptom;
 import pillmate.backend.repository.AlarmRepository;
 import pillmate.backend.repository.DiaryRepository;
 import pillmate.backend.repository.MedicinePerMemberRepository;
@@ -47,6 +48,10 @@ public class DiaryService {
     public void edit(Long diaryId, EditDiaryRequest editDiaryRequest) {
         Diary diary = findById(diaryId);
         diary.update(editDiaryRequest.getSymptom(), editDiaryRequest.getScore(), editDiaryRequest.getRecord());
+    }
+
+    public List<Symptom> showSymptoms(Long memberId) {
+        return findByMemberId(memberId).getSymptoms();
     }
 
     public Today show(Long memberId, LocalDate date) {
