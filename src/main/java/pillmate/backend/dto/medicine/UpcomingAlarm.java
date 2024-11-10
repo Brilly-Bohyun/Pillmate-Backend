@@ -9,5 +9,6 @@ import java.time.LocalTime;
 @Data
 public class UpcomingAlarm {
     private String medicineName;
+    private String category;
     private LocalTime time;
 }

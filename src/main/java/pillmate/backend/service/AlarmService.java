@@ -11,8 +11,6 @@ import pillmate.backend.dto.alarm.AlarmInfo;
 import pillmate.backend.dto.medicine.UpcomingAlarm;
 import pillmate.backend.entity.Alarm;
 import pillmate.backend.entity.MedicinePerMember;
-import pillmate.backend.entity.MedicineRecord;
-import pillmate.backend.entity.TimeSlot;
 import pillmate.backend.repository.AlarmRepository;
 import pillmate.backend.repository.MedicinePerMemberRepository;
 
@@ -76,6 +74,7 @@ public class AlarmService {
                 );
 
         return UpcomingAlarm.builder().medicineName(upcomingAlarm.getMedicinePerMember().getMedicine().getName())
+                .category(upcomingAlarm.getMedicinePerMember().getMedicine().getCategory())
                 .time(upcomingAlarm.getTimeSlot().getPickerTime()).build();
     }
 
