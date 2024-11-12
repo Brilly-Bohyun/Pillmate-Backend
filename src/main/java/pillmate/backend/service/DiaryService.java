@@ -61,6 +61,11 @@ public class DiaryService {
                         .time(alarm.getTimeSlot().getPickerTime()).build())
                         .toList();
         Diary diary = getDiary(memberId, date);
+
+        if (diary == null) {
+            return Today.builder().build();
+        }
+
         return Today.builder().alarms(alarms)
                               .symptoms(diary.getSymptom())
                               .record(diary.getRecord())
@@ -86,7 +91,7 @@ public class DiaryService {
     }
 
     private Diary getDiary(Long memberId, LocalDate date) {
-        return diaryRepository.findByMemberIdAndAndDate(memberId, date).orElseThrow(() -> new NotFoundException(NOT_FOUND_DIARY));
+        return diaryRepository.findByMemberIdAndAndDate(memberId, date);
     }
 
     private List<PainInfo> getPainsPerDay(Long memberId) {
