@@ -7,9 +7,10 @@ import pillmate.backend.entity.Diary;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
-    Diary findByMemberIdAndAndDate(Long memberId, LocalDate date);
+    Optional<Diary> findByMemberIdAndAndDate(Long memberId, LocalDate date);
 
     @Query("SELECT d FROM Diary d WHERE d.member.id = :memberId AND d.date BETWEEN :startDate AND :endDate")
     List<Diary> findDiariesByMemberIdAndDateRange(@Param("memberId") Long memberId,
