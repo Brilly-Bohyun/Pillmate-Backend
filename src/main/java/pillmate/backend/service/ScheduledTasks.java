@@ -12,7 +12,7 @@ public class ScheduledTasks {
     @Autowired
     private AlarmService alarmService;
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?", zone="Asia/Seoul")
     public void resetIsEatenAtMidnight() {
         alarmService.resetAllIsEaten();
     }
