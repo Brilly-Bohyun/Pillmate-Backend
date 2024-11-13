@@ -9,5 +9,6 @@ import java.time.LocalTime;
 @Data
 public class SimpleAlarmInfo {
     private String name;
+    private String category;
     private LocalTime time;
 }

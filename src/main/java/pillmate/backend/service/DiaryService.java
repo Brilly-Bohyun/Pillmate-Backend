@@ -58,6 +58,7 @@ public class DiaryService {
     public Today show(Long memberId, LocalDate date) {
         List<SimpleAlarmInfo> alarms = findAlarmsByMemberId(memberId).stream().map(alarm -> SimpleAlarmInfo.builder()
                         .name(alarm.getMedicinePerMember().getMedicine().getName())
+                        .category(alarm.getMedicinePerMember().getMedicine().getCategory())
                         .time(alarm.getTimeSlot().getPickerTime()).build())
                         .toList();
         Diary diary = getDiary(memberId, date);
