@@ -8,7 +8,8 @@ import java.time.LocalTime;
 @Builder
 @Data
 public class MedicineAlarmRecord {
-    private Long MedicineId;
+    private Long alarmId;
+    private Long medicineId;
     private String name;
     private LocalTime time;
     private String category;

@@ -67,7 +67,8 @@ public class MainService {
                 .map(alarm -> {
                     // MedicineAlarmRecord 생성
                     return MedicineAlarmRecord.builder()
-                            .MedicineId(alarm.getMedicinePerMember().getMedicine().getId())
+                            .alarmId(alarm.getId())
+                            .medicineId(alarm.getMedicinePerMember().getMedicine().getId())
                             .name(alarm.getMedicinePerMember().getMedicine().getName())
                             .time(alarm.getTimeSlot().getPickerTime())
                             .category(alarm.getMedicinePerMember().getMedicine().getCategory())
