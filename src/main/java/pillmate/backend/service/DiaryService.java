@@ -78,6 +78,7 @@ public class DiaryService {
         List<MedicinePerMember> medicines = findMedicineByMemberId(memberId);
         List<TotalInfo> totalInfos = medicines.stream().map(medicinePerMember -> TotalInfo.builder()
                 .name(medicinePerMember.getMedicine().getName())
+                .category(medicinePerMember.getMedicine().getCategory())
                 .startDate(medicinePerMember.getCreated())
                 .endDate(medicinePerMember.getCreated().plusDays(medicinePerMember.getDay()))
                 .build()).toList();

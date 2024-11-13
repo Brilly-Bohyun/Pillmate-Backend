@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Data
 public class TotalInfo {
     private String name;
+    private String category;
     private LocalDate startDate;
     private LocalDate endDate;
 }
