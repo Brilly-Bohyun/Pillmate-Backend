@@ -11,6 +11,7 @@ import pillmate.backend.dto.alarm.AlarmInfo;
 import pillmate.backend.dto.medicine.UpcomingAlarm;
 import pillmate.backend.entity.Alarm;
 import pillmate.backend.entity.MedicinePerMember;
+import pillmate.backend.entity.TimeSlot;
 import pillmate.backend.repository.AlarmRepository;
 import pillmate.backend.repository.MedicinePerMemberRepository;
 
@@ -57,6 +58,39 @@ public class AlarmService {
     @Transactional
     public void resetAllIsEaten() {
         alarmRepository.updateAllIsEatenToFalse();
+    }
+
+    @Transactional
+    public void updateTime(Long memberId, String medicineName, List<TimeSlot> timeSlots) {
+        // 1. Alarm 리스트 가져오기
+        List<Alarm> alarms = findByMemberIdAndMedicineName(memberId, medicineName);
+        int currentAlarmCount = alarms.size();
+        int newTimeSlotCount = timeSlots.size();
+
+        // 2. Alarm의 개수를 TimeSlot에 맞추기
+        if (newTimeSlotCount > currentAlarmCount) {
+            // 부족한 알람 개수만큼 새로운 Alarm 추가
+            for (int i = currentAlarmCount; i < newTimeSlotCount; i++) {
+                Alarm newAlarm = Alarm.builder()
+                        .medicinePerMember(alarms.get(0).getMedicinePerMember()) // 기존 MedicinePerMember 사용
+                        .timeSlot(timeSlots.get(i))
+                        .isEaten(false)
+                        .isAvailable(true)
+                        .build();
+                alarms.add(newAlarm);
+            }
+        } else if (newTimeSlotCount < currentAlarmCount) {
+            // 초과한 알람 제거
+            alarms.subList(newTimeSlotCount, currentAlarmCount).clear();
+        }
+
+        // 3. 알람의 timeSlot 업데이트
+        for (int i = 0; i < newTimeSlotCount; i++) {
+            alarms.get(i).updateTimeSlot(timeSlots.get(i));
+        }
+
+        // 4. 변경된 알람들 저장
+        alarmRepository.saveAll(alarms);
     }
 
     public UpcomingAlarm getUpcomingAlarm(Long memberId, LocalTime currentTime) {

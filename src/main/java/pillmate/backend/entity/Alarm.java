@@ -52,6 +52,12 @@ public class Alarm {
         this.isAvailable = isAvailable;
     }
 
+    public void updateTimeSlot(TimeSlot newTimeSlot) {
+        if (newTimeSlot != null) {
+            this.timeSlot = newTimeSlot;
+        }
+    }
+
     public void updateAvailability(Boolean isAvailable) {
         if (isAvailable != null) {
             this.isAvailable = isAvailable;

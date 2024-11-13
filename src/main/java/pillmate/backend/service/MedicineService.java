@@ -132,15 +132,14 @@ public class MedicineService {
     @Transactional
     public void modify(Long memberId, ModifyMedicineInfo modifyMedicineInfo) {
         Medicine medicine = findByName(modifyMedicineInfo.getOldMedicineName());
+        MedicinePerMember medicinePerMember = findByMemberIdAndMedicineId(memberId, medicine.getId());
+        medicinePerMember.update(modifyMedicineInfo.getAmount(),
+                modifyMedicineInfo.getTimesPerDay(),
+                modifyMedicineInfo.getDay(),
+                modifyMedicineInfo.getTimeSlotList());
+        alarmService.updateTime(memberId, medicinePerMember.getMedicine().getName(), modifyMedicineInfo.getTimeSlotList());
         if ("white".equals(medicine.getPhoto())) {
-            MedicinePerMember medicinePerMember = findByMemberIdAndMedicineId(memberId, medicine.getId());
-            medicinePerMember.update(modifyMedicineInfo.getAmount(),
-                    modifyMedicineInfo.getTimesPerDay(),
-                    modifyMedicineInfo.getDay(),
-                    modifyMedicineInfo.getTimeSlotList());
             medicinePerMember.getMedicine().updateName(modifyMedicineInfo.getNewMedicineName());
-        } else {
-            throw new BadRequestException(ErrorCode.INVALID_MEDICINE);
         }
     }
 
