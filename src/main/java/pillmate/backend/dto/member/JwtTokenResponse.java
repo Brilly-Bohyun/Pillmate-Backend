@@ -12,12 +12,14 @@ import pillmate.backend.entity.member.Member;
 @Data
 @NoArgsConstructor
 public class JwtTokenResponse {
+    private Long userId;
     private String name;
     private String grantType;
     private String accessToken;
 
     public static JwtTokenResponse from(String accessToken, Member member) {
         return JwtTokenResponse.builder()
+                .userId(member.getId())
                 .name(member.getName())
                 .grantType(JwtTokenConst.TOKEN_PREFIX)
                 .accessToken(accessToken)
