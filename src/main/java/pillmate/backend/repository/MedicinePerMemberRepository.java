@@ -9,5 +9,4 @@ import java.util.Optional;
 public interface MedicinePerMemberRepository extends JpaRepository<MedicinePerMember, Long> {
     List<MedicinePerMember> findAllByMemberId(Long memberId);
     Optional<MedicinePerMember> findByMemberIdAndMedicineId(Long memberId, Long medicineId);
-    Integer countAllByMemberId(Long memberId);
 }
