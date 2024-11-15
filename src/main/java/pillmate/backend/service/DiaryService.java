@@ -64,7 +64,7 @@ public class DiaryService {
         Diary diary = getDiary(memberId, date);
 
         if (diary == null) {
-            return Today.builder().build();
+            return Today.builder().alarms(alarms).build();
         }
 
         return Today.builder().alarms(alarms)
@@ -83,7 +83,7 @@ public class DiaryService {
                 .startDate(medicinePerMember.getCreated())
                 .endDate(medicinePerMember.getCreated().plusDays(medicinePerMember.getDay()))
                 .build()).toList();
-        Long duration = ChronoUnit.DAYS.between(findByMemberId(memberId).getCreated(), LocalDate.now());
+        Long duration = ChronoUnit.DAYS.between(findByMemberId(memberId).getCreated(), LocalDate.now()) + 1;
         return ShowDiaryResponse.builder()
                 .duration(duration)
                 .painsPerDay(getPainsPerDay(memberId))
