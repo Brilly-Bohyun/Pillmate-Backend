@@ -19,7 +19,6 @@ import pillmate.backend.dto.member.ModifyPasswordRequest;
 import pillmate.backend.dto.member.MyHealthInfo;
 import pillmate.backend.dto.member.MyMonthlyInfo;
 import pillmate.backend.dto.member.SignUpRequest;
-import pillmate.backend.entity.MedicinePerMember;
 import pillmate.backend.entity.member.Member;
 import pillmate.backend.entity.member.MemberType;
 import pillmate.backend.entity.token.LogoutAccessToken;
@@ -32,9 +31,7 @@ import pillmate.backend.service.token.RefreshTokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
 import java.util.UUID;
 
 import static pillmate.backend.common.exception.errorcode.ErrorCode.ALREADY_EXIST_USER;
@@ -43,7 +40,6 @@ import static pillmate.backend.common.exception.errorcode.ErrorCode.MISMATCH_EMA
 import static pillmate.backend.common.exception.errorcode.ErrorCode.MISMATCH_PASSWORD;
 import static pillmate.backend.common.exception.errorcode.ErrorCode.MISMATCH_TOKEN;
 import static pillmate.backend.common.exception.errorcode.ErrorCode.NOT_DEFAULT_TYPE_USER;
-import static pillmate.backend.common.exception.errorcode.ErrorCode.NOT_FOUND_MEDICINE_MEMBER;
 import static pillmate.backend.common.exception.errorcode.ErrorCode.NOT_FOUND_USER;
 
 @Slf4j
@@ -53,7 +49,6 @@ import static pillmate.backend.common.exception.errorcode.ErrorCode.NOT_FOUND_US
 public class MemberService {
     private final MemberRepository memberRepository;
     private final MedicineRecordRepository medicineRecordRepository;
-    private final MedicinePerMemberRepository medicinePerMemberRepository;
     private final RefreshTokenService refreshTokenService;
     private final LogoutAccessTokenService logoutAccessTokenService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -229,12 +224,11 @@ public class MemberService {
     }
 
     private Integer getDuration(Long memberId) {
-        return Math.toIntExact(ChronoUnit.DAYS.between(findMemberById(memberId).getCreated(), LocalDate.now()));
+        return Math.toIntExact(ChronoUnit.DAYS.between(findMemberById(memberId).getCreated(), LocalDate.now()) + 1);
     }
 
     private Integer getRate(Long memberId) {
-        Integer uneatenDays = medicineRecordRepository.countUneatenDays(memberId, START_DATE, END_DATE);
-        return 100 - (100 / getDuration(memberId) * uneatenDays);
+        return (getTakenDay(memberId) / getDuration(memberId)) * 100;
     }
 
     private Member findMemberById(Long memberId) {

@@ -20,15 +20,6 @@ public interface MedicineRecordRepository extends JpaRepository<MedicineRecord, 
                             @Param("startDate") LocalDate startDate,
                             @Param("endDate") LocalDate endDate);
 
-    @Query("SELECT COUNT(DISTINCT mr.date) " +
-            "FROM MedicineRecord mr " +
-            "WHERE mr.member.id = :memberId " +
-            "AND mr.date BETWEEN :startDate AND :endDate " +
-            "AND mr.isEaten = FALSE")
-    Integer countUneatenDays(@Param("memberId") Long memberId,
-                             @Param("startDate") LocalDate startDate,
-                             @Param("endDate") LocalDate endDate);
-
     @Query("SELECT COUNT(mr) FROM MedicineRecord mr WHERE mr.member.id = :memberId AND mr.medicine.id = :medicineId AND mr.isEaten = true")
     Integer countByMemberIdAndMedicineIdAndIsEatenTrue(@Param("memberId") Long memberId, @Param("medicineId") Long medicineId);
 
