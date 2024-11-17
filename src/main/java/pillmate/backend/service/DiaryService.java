@@ -60,7 +60,7 @@ public class DiaryService {
                         .name(alarm.getMedicinePerMember().getMedicine().getName())
                         .category(alarm.getMedicinePerMember().getMedicine().getCategory())
                         .time(alarm.getTimeSlot().getPickerTime()).build())
-                        .toList();
+                .toList();
         Diary diary = getDiary(memberId, date);
 
         if (diary == null) {
@@ -68,11 +68,12 @@ public class DiaryService {
         }
 
         return Today.builder().alarms(alarms)
-                              .symptoms(diary.getSymptom())
-                              .record(diary.getRecord())
-                              .score(diary.getScore())
-                              .comment(findByScore(diary.getScore()))
-                              .build();
+                .id(diary.getId())
+                .symptoms(diary.getSymptom())
+                .record(diary.getRecord())
+                .score(diary.getScore())
+                .comment(findByScore(diary.getScore()))
+                .build();
     }
 
     public ShowDiaryResponse showMonthly(Long memberId) {

@@ -9,6 +9,7 @@ import java.util.List;
 @Builder
 @Data
 public class Today {
+    private Long id;
     private List<SimpleAlarmInfo> alarms;
     private List<String> symptoms;
     private Integer score;
