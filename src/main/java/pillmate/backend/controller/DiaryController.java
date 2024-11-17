@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pillmate.backend.common.util.LoggedInMember;
 import pillmate.backend.dto.diary.CreateDiaryRequest;
 import pillmate.backend.dto.diary.CreateDiaryResponse;
 import pillmate.backend.dto.diary.EditDiaryRequest;
 import pillmate.backend.dto.diary.ShowDiaryResponse;
-import pillmate.backend.dto.diary.TotalInfo;
 import pillmate.backend.dto.diary.Today;
 import pillmate.backend.entity.member.Symptom;
 import pillmate.backend.service.DiaryService;
@@ -47,8 +47,8 @@ public class DiaryController {
     }
 
     @GetMapping
-    public ShowDiaryResponse showMonthly(@LoggedInMember Long memberId) {
-        return diaryService.showMonthly(memberId);
+    public ShowDiaryResponse showMonthly(@LoggedInMember Long memberId, @RequestParam("date") LocalDate date) {
+        return diaryService.showMonthly(memberId, date);
     }
 
     @GetMapping("/symptoms")

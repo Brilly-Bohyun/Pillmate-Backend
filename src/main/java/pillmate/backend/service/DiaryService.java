@@ -76,7 +76,7 @@ public class DiaryService {
                 .build();
     }
 
-    public ShowDiaryResponse showMonthly(Long memberId) {
+    public ShowDiaryResponse showMonthly(Long memberId, LocalDate date) {
         List<MedicinePerMember> medicines = findMedicineByMemberId(memberId);
         List<TotalInfo> totalInfos = medicines.stream().map(medicinePerMember -> TotalInfo.builder()
                 .name(medicinePerMember.getMedicine().getName())
@@ -87,9 +87,9 @@ public class DiaryService {
         Long duration = ChronoUnit.DAYS.between(findByMemberId(memberId).getCreated(), LocalDate.now()) + 1;
         return ShowDiaryResponse.builder()
                 .duration(duration)
-                .painsPerDay(getPainsPerDay(memberId))
+                .painsPerDay(getPainsPerDay(memberId, date))
                 .totalInfo(totalInfos)
-                .today(show(memberId, LocalDate.now()))
+                .today(show(memberId, date))
                 .build();
     }
 
@@ -97,9 +97,10 @@ public class DiaryService {
         return diaryRepository.findByMemberIdAndAndDate(memberId, date);
     }
 
-    private List<PainInfo> getPainsPerDay(Long memberId) {
-        LocalDate firstDayOfMonth = LocalDate.now().withDayOfMonth(1);
-        List<Diary> diaries = diaryRepository.findDiariesByMemberIdAndDateRange(memberId, firstDayOfMonth, LocalDate.now());
+    private List<PainInfo> getPainsPerDay(Long memberId, LocalDate date) {
+        LocalDate firstDayOfMonth = date.withDayOfMonth(1);
+        LocalDate lastDayOfMonth = date.withDayOfMonth(date.lengthOfMonth());
+        List<Diary> diaries = diaryRepository.findDiariesByMemberIdAndDateRange(memberId, firstDayOfMonth, lastDayOfMonth);
         return diaries.stream().map(diary -> PainInfo.builder().date(diary.getDate()).level(diary.getScore()).build()).toList();
     }
 
