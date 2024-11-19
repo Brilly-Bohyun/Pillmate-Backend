@@ -48,7 +48,10 @@ public class MainService {
 
     private List<MissedAlarm> getMissedAlarms(Long memberId) {
         LocalTime now = LocalTime.now();
-        return alarmRepository.findMissedAlarms(memberId, now).stream().map(
+        return alarmRepository.findMissedAlarms(memberId, now).stream()
+                .filter(alarm -> alarm.getMedicinePerMember().getCreated().plusDays(alarm.getMedicinePerMember().getDay()).isAfter(LocalDate.now())
+                        || alarm.getMedicinePerMember().getCreated().plusDays(alarm.getMedicinePerMember().getDay()).isEqual(LocalDate.now()))
+                .map(
                 alarm -> MissedAlarm.builder()
                         .name(alarm.getMedicinePerMember().getMedicine().getName())
                         .time(alarm.getTimeSlot().getPickerTime())
@@ -64,6 +67,8 @@ public class MainService {
 
         return alarmList.stream()
                 .filter(alarm -> alarm.getIsAvailable().booleanValue() == Boolean.TRUE)
+                .filter(alarm -> alarm.getMedicinePerMember().getCreated().plusDays(alarm.getMedicinePerMember().getDay()).isAfter(LocalDate.now())
+                        || alarm.getMedicinePerMember().getCreated().plusDays(alarm.getMedicinePerMember().getDay()).isEqual(LocalDate.now()))
                 .map(alarm -> {
                     // MedicineAlarmRecord 생성
                     return MedicineAlarmRecord.builder()
@@ -134,12 +139,34 @@ public class MainService {
     }
 
     private BestRecord getBestRecord(Long memberId) {
-        return BestRecord.from(getAllMedicineAdherenceRates(memberId).stream().findFirst().orElse(AdherenceRate.empty()));
+        return BestRecord.from(getBestRate(memberId));
     }
 
     private WorstRecord getWorstRecord(Long memberId) {
+        AdherenceRate bestRate = getBestRate(memberId);
         List<AdherenceRate> rates = getAllMedicineAdherenceRates(memberId);
-        return WorstRecord.from(rates.isEmpty() ? AdherenceRate.empty() : rates.get(rates.size() - 1));
+
+        AdherenceRate worstRate = rates.isEmpty() ? AdherenceRate.empty() : rates.get(rates.size() - 1);
+
+        // 만약 worstRate와 bestRate가 같다면
+        if (worstRate.equals(bestRate)) {
+            // 리스트에 2개 이상의 요소가 있을 경우 그 이전 값을 선택
+            if (rates.size() > 1) {
+                worstRate = rates.get(rates.size() - 2);
+            } else {
+                // 이전 값이 없으면 빈 값을 반환
+                worstRate = AdherenceRate.empty();
+            }
+        }
+
+        return WorstRecord.from(worstRate);
+    }
+
+    private AdherenceRate getBestRate(Long memberId) {
+        return getAllMedicineAdherenceRates(memberId).stream()
+                .filter(adherenceRate -> adherenceRate.getTaken() != 0)
+                .findFirst()
+                .orElse(AdherenceRate.empty());
     }
 
     private List<MedicinePerMember> findMedicineByMemberId(Long memberId) {
