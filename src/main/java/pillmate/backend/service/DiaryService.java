@@ -56,7 +56,11 @@ public class DiaryService {
     }
 
     public Today show(Long memberId, LocalDate date) {
-        List<SimpleAlarmInfo> alarms = findAlarmsByMemberId(memberId).stream().map(alarm -> SimpleAlarmInfo.builder()
+        List<SimpleAlarmInfo> alarms = findAlarmsByMemberId(memberId).stream()
+                .filter(alarm -> alarm.getMedicinePerMember().getCreated().isBefore(date) || alarm.getMedicinePerMember().getCreated().isEqual(date))
+                .filter(alarm -> alarm.getMedicinePerMember().getCreated().plusDays(alarm.getMedicinePerMember().getDay()).isAfter(date)
+                        || alarm.getMedicinePerMember().getCreated().plusDays(alarm.getMedicinePerMember().getDay()).isEqual(date))
+                .map(alarm -> SimpleAlarmInfo.builder()
                         .name(alarm.getMedicinePerMember().getMedicine().getName())
                         .category(alarm.getMedicinePerMember().getMedicine().getCategory())
                         .time(alarm.getTimeSlot().getPickerTime()).build())
@@ -78,12 +82,13 @@ public class DiaryService {
 
     public ShowDiaryResponse showMonthly(Long memberId, LocalDate date) {
         List<MedicinePerMember> medicines = findMedicineByMemberId(memberId);
-        List<TotalInfo> totalInfos = medicines.stream().map(medicinePerMember -> TotalInfo.builder()
-                .name(medicinePerMember.getMedicine().getName())
-                .category(medicinePerMember.getMedicine().getCategory())
-                .startDate(medicinePerMember.getCreated())
-                .endDate(medicinePerMember.getCreated().plusDays(medicinePerMember.getDay()))
-                .build()).toList();
+        List<TotalInfo> totalInfos = medicines.stream()
+                .map(medicinePerMember -> TotalInfo.builder()
+                        .name(medicinePerMember.getMedicine().getName())
+                        .category(medicinePerMember.getMedicine().getCategory())
+                        .startDate(medicinePerMember.getCreated())
+                        .endDate(medicinePerMember.getCreated().plusDays(medicinePerMember.getDay()))
+                        .build()).toList();
         Long duration = ChronoUnit.DAYS.between(findByMemberId(memberId).getCreated(), LocalDate.now()) + 1;
         return ShowDiaryResponse.builder()
                 .duration(duration)
