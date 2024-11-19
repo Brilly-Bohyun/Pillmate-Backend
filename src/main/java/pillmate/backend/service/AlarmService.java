@@ -15,6 +15,7 @@ import pillmate.backend.entity.TimeSlot;
 import pillmate.backend.repository.AlarmRepository;
 import pillmate.backend.repository.MedicinePerMemberRepository;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
@@ -30,6 +31,7 @@ public class AlarmService {
 
     public List<AlarmInfo> showAll(Long memberId) {
         return alarmRepository.findAllByMemberId(memberId).stream()
+                .filter(alarm -> alarm.getMedicinePerMember().getCreated().plusDays(alarm.getMedicinePerMember().getDay()).isAfter(LocalDate.now()))
                 .map(alarm -> AlarmInfo.builder()
                         .id(alarm.getId())
                         .name(alarm.getMedicinePerMember().getMedicine().getName())
@@ -96,6 +98,8 @@ public class AlarmService {
     public UpcomingAlarm getUpcomingAlarm(Long memberId, LocalTime currentTime) {
         Alarm upcomingAlarm = alarmRepository.findAllByMemberId(memberId).stream()
                 .filter(alarm -> alarm.getIsAvailable().booleanValue() == Boolean.TRUE && alarm.getIsEaten().booleanValue() == Boolean.FALSE)
+                .filter(alarm -> alarm.getMedicinePerMember().getCreated().plusDays(alarm.getMedicinePerMember().getDay()).isAfter(LocalDate.now())
+                        || alarm.getMedicinePerMember().getCreated().plusDays(alarm.getMedicinePerMember().getDay()).isEqual(LocalDate.now()))
                 .filter(alarm -> alarm.getTimeSlot().getPickerTime().isAfter(currentTime)) // 현재 시간 이후의 알람 필터링
                 .sorted(Comparator.comparing(alarm -> alarm.getTimeSlot().getPickerTime())) // pickerTime 기준으로 정렬
                 .findFirst() // 현재 시간 이후의 첫 번째 알람을 찾음
@@ -110,10 +114,6 @@ public class AlarmService {
         return UpcomingAlarm.builder().medicineName(upcomingAlarm.getMedicinePerMember().getMedicine().getName())
                 .category(upcomingAlarm.getMedicinePerMember().getMedicine().getCategory())
                 .time(upcomingAlarm.getTimeSlot().getPickerTime()).build();
-    }
-
-    private MedicinePerMember findByMemberIdAndMedicineId(Long memberId, Long medicineId) {
-        return medicinePerMemberRepository.findByMemberIdAndMedicineId(memberId, medicineId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND_MEDICINE_MEMBER));
     }
 
     private Alarm findByAlarmId(Long alarmId) {
